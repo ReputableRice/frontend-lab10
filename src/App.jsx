@@ -52,19 +52,16 @@ function App() {
   }
 
   function topTenFilter(category) {
-    let sortingCountries = [...data]
+    let sortingCountries = [...data];
 
-    switch (category) {
-      case "all":
-        setData(data);
-        break;
-      case "population":
-        setAreaCheck(false)
-        break; 
-      case "area":
-        setPopulationCheck(false)
-        break;
+    //use if statement since it's just two
+    if (populationCheck) {
+      sortingCountries = sortingCountries.sort((a, b) => b.population - a.population).slice(0, 10);
+    } else if (areaCheck) {
+      sortingCountries = sortingCountries.sort((a, b) => b.area - a.area).slice(0, 10);
     }
+
+    setData(sortingCountries)
   }
 
   function handleContinent(e) {
@@ -86,7 +83,7 @@ function App() {
         <div className='border-2 border-black m p-3 flex items-center space-x-3'>
           <input
             type='checkbox'
-            onChange={() => 
+            onChange={() =>
               setAlphaCheck(!alphaCheck)}
             checked={alphaCheck}
           />
@@ -98,17 +95,25 @@ function App() {
           <div className='flex space-x-6'>
             <input
               type='checkbox'
-              onChange={() => topTenFilter("population")}
+              onChange={() => {
+                setPopulationCheck(!populationCheck);
+                topTenFilter("population");
+                setAreaCheck(false)
+              }}
               checked={populationCheck}
             />
             <p>By Population</p>
           </div>
 
           <div className='flex space-x-6'>
-            <input 
-            type='checkbox'
-            onChange={() => topTenFilter("area")}
-            checked={areaCheck}
+            <input
+              type="checkbox"
+              onChange={() => {
+                setAreaCheck(!areaCheck);
+                topTenFilter("area");
+                setPopulationCheck(false)
+              }}
+              checked={areaCheck}
             />
             <p>By Area</p>
           </div>
