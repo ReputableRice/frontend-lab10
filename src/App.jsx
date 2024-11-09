@@ -8,9 +8,11 @@ function App() {
   const DATA_URL = "https://restcountries.com/v3.1/all"
   const [data, setData] = useState([])
 
+  const [filter, setFilter] = useState("default")
+
   useEffect((() => {
     fetchData()
-  }), [])
+  }), []);
 
   async function fetchData() {
     try {
@@ -21,6 +23,29 @@ function App() {
     } catch (error) {
       console.log(error)
       console.log("error message")
+    }
+  }
+
+  function arrayFilter(category) {
+    switch (category) {
+      case "all":
+        setData(data);
+        break;
+      case "alpha":
+
+        break;
+      case "population":
+
+        break;
+      case "area":
+
+        break;
+      case "continent":
+
+        break;
+      case "subregion":
+
+        break;
     }
   }
 
@@ -48,7 +73,7 @@ function App() {
       <h1 className='m-auto font-black text-5xl'>Countries of the World</h1>
       <div className='m-auto flex mt-6 mb-6'>
         <div className='border-2 border-black m p-3 flex items-center space-x-3'>
-          <input type='checkbox' />
+          <input type='checkbox' onChange={alphaHandler} />
           <p>Alpha</p>
         </div>
 
@@ -98,7 +123,7 @@ function App() {
       </div>
 
       <div className='countryContent'>
-        <Country data={data}/>
+        <Country data={data} />
       </div>
     </div>
   )
