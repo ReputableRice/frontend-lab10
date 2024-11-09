@@ -7,12 +7,26 @@ import Country from './components/Country'
 function App() {
   const DATA_URL = "https://restcountries.com/v3.1/all"
   const [data, setData] = useState([])
-
-  const [filter, setFilter] = useState("default")
+  //Regions
+  const [region, setRegion] = useState('')
+  const [subregion, setSubregion] = useState('')
+  // Alphabet Filter
+  const [alphaCheck, setAlphaCheck] = useState(false)
+  // Top Ten Filters
+  const [populationCheck, setPopulationCheck] = useState(false)
+  const [areaCheck, setAreaCheck] = useState(false)
 
   useEffect((() => {
     fetchData()
   }), []);
+
+  useEffect(() => {
+    toggleAlpha()
+  }, [alphaCheck])
+
+  useEffect(() => {
+    topTenFilter()
+  }, [populationCheck, areaCheck])
 
   async function fetchData() {
     try {
@@ -26,27 +40,35 @@ function App() {
     }
   }
 
-  function arrayFilter(category) {
+  function toggleAlpha() {
+    if (alphaCheck) {
+      const alphaCountries = [...data]
+      alphaCountries.sort((a, b) => a.name.common.localeCompare(b.name.common))
+      // sortedBooks.sort((a, b) => a.title.localeCompare(b.title));
+      setData(alphaCountries)
+    } else {
+      fetchData()
+    }
+  }
+
+  function topTenFilter(category) {
+    let sortingCountries = [...data]
+
     switch (category) {
       case "all":
         setData(data);
         break;
-      case "alpha":
-
-        break;
       case "population":
-
-        break;
+        setAreaCheck(false)
+        break; 
       case "area":
-
-        break;
-      case "continent":
-
-        break;
-      case "subregion":
-
+        setPopulationCheck(false)
         break;
     }
+  }
+
+  function handleContinent(e) {
+    e.preventDefault()
   }
 
   // https://stackoverflow.com/questions/35976167/find-unique-values-from-an-array-in-react-js
@@ -54,17 +76,6 @@ function App() {
 
   const uniqueSubregions = Array.from(new Set(data.map((country) => country.subregion)));
 
-  function alphaHandler() {
-    alert("handler")
-  }
-
-  function populationHandler() {
-    alert("handler")
-  }
-
-  function areaHandler() {
-    alert("handler")
-  }
 
   return (
     <div className='home'>
@@ -73,30 +84,43 @@ function App() {
       <h1 className='m-auto font-black text-5xl'>Countries of the World</h1>
       <div className='m-auto flex mt-6 mb-6'>
         <div className='border-2 border-black m p-3 flex items-center space-x-3'>
-          <input type='checkbox' onChange={alphaHandler} />
+          <input
+            type='checkbox'
+            onChange={() => 
+              setAlphaCheck(!alphaCheck)}
+            checked={alphaCheck}
+          />
           <p>Alpha</p>
         </div>
 
         <div className='border-2 border-black m p-3 flex flex-col space-x-3'>
           <p>Top 10</p>
           <div className='flex space-x-6'>
-            <input type='checkbox' />
+            <input
+              type='checkbox'
+              onChange={() => topTenFilter("population")}
+              checked={populationCheck}
+            />
             <p>By Population</p>
           </div>
 
           <div className='flex space-x-6'>
-            <input type='checkbox' />
+            <input 
+            type='checkbox'
+            onChange={() => topTenFilter("area")}
+            checked={areaCheck}
+            />
             <p>By Area</p>
           </div>
         </div>
 
         <div className='border-2 border-black p-3 '>
           <p>By Continent</p>
-          <select name="subregions">
-            <option value="test">test</option>
+          <select name="regions" className='drop-shadow-lg border-neutral-700 border-2' onChange={e => setRegion(e.target.value)}>
+            <option> All </option>
             {uniqueRegions.length ? (
               uniqueRegions.map((region, index) => (
-                <option key={index} className='text-black' value={region}>
+                <option key={index} className='options' value={region}>
                   {region}
                 </option>
               ))
@@ -108,10 +132,11 @@ function App() {
 
         <div className='border-2 border-black p-3'>
           <p>By Subregion</p>
-          <select name="subregions">
+          <select name="subregions" className='drop-shadow-lg border-neutral-700 border-2' onChange={e => setSubregion(e.target.value)}>
+            <option> Choose region </option>
             {uniqueSubregions.length ? (
               uniqueSubregions.map((subregion, index) => (
-                <option key={index} className='text-black' value={subregion}>
+                <option key={index} className='' value={subregion}>
                   {subregion}
                 </option>
               ))

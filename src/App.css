@@ -21,3 +21,14 @@
 .link {
   margin-top: auto;
 }
+
+
+select {
+  min-width: 8rem
+}
+
+.options {
+  color: black;
+  border: 1px black solid;
+
+}
