@@ -7,6 +7,8 @@ import Country from './components/Country'
 function App() {
   const DATA_URL = "https://restcountries.com/v3.1/all"
   const [data, setData] = useState([])
+  const [filteredData, setFilteredData] = ([])
+  const [staticData, setStaticData] = useState([]) //For Select Menu
   //Regions
   const [region, setRegion] = useState('')
   const [subregion, setSubregion] = useState('')
@@ -16,63 +18,64 @@ function App() {
   const [populationCheck, setPopulationCheck] = useState(false)
   const [areaCheck, setAreaCheck] = useState(false)
 
-  useEffect((() => {
-    fetchData()
-  }), []);
 
   useEffect(() => {
-    toggleAlpha()
-  }, [alphaCheck])
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    topTenFilter()
-  }, [populationCheck, areaCheck])
+    applyFilters();
+  }, [alphaCheck, populationCheck, areaCheck, region, subregion]);
 
+  useEffect(() => {
+    if (subregion && subregion !== "Choose region") {
+      return (
+        <option>
+        </option>
+      )
+    }
+    
+  }, [subregion])
   async function fetchData() {
     try {
-      const response = await fetch(DATA_URL);
-      console.log(response);
-      const data = await response.json()
-      setData(data)
+      const response = await fetch(DATA_URL)
+      const countries = await response.json()
+      setData(countries)
+      setStaticData(countries)
     } catch (error) {
-      console.log(error)
-      console.log("error message")
+      console.error("Error fetching data:", error)
     }
   }
 
-  function toggleAlpha() {
+  function applyFilters() {
+    let filteredCountries = [...staticData]
+
+    if (region && region !== "All") {
+      filteredCountries = filteredCountries.filter(country => country.region === region)
+    }
+
+    if (subregion && subregion !== "Choose region") {
+      filteredCountries = filteredCountries.filter(country => country.subregion === subregion);
+    }
+
     if (alphaCheck) {
-      const alphaCountries = [...data]
-      alphaCountries.sort((a, b) => a.name.common.localeCompare(b.name.common))
-      // sortedBooks.sort((a, b) => a.title.localeCompare(b.title));
-      setData(alphaCountries)
-    } else {
-      fetchData()
+      filteredCountries.sort((a, b) => a.name.common.localeCompare(b.name.common))
     }
-  }
 
-  function topTenFilter(category) {
-    let sortingCountries = [...data];
-
-    //use if statement since it's just two
     if (populationCheck) {
-      sortingCountries = sortingCountries.sort((a, b) => b.population - a.population).slice(0, 10);
+      filteredCountries = filteredCountries.sort((a, b) => b.population - a.population).slice(0, 10)
     } else if (areaCheck) {
-      sortingCountries = sortingCountries.sort((a, b) => b.area - a.area).slice(0, 10);
+      filteredCountries = filteredCountries.sort((a, b) => b.area - a.area).slice(0, 10)
     }
 
-    setData(sortingCountries)
+    setData(filteredCountries)
   }
-
-  function handleContinent(e) {
-    e.preventDefault()
-  }
+  
 
   // https://stackoverflow.com/questions/35976167/find-unique-values-from-an-array-in-react-js
-  const uniqueRegions = Array.from(new Set(data.map((country) => country.region)));
+  const uniqueRegions = Array.from(new Set(staticData.map((country) => country.region)))
 
-  const uniqueSubregions = Array.from(new Set(data.map((country) => country.subregion)));
-
+  const uniqueSubregions = Array.from(new Set(staticData.map((country) => country.subregion)))
 
   return (
     <div className='home'>
@@ -97,7 +100,6 @@ function App() {
               type='checkbox'
               onChange={() => {
                 setPopulationCheck(!populationCheck);
-                topTenFilter("population");
                 setAreaCheck(false)
               }}
               checked={populationCheck}
@@ -110,7 +112,6 @@ function App() {
               type="checkbox"
               onChange={() => {
                 setAreaCheck(!areaCheck);
-                topTenFilter("area");
                 setPopulationCheck(false)
               }}
               checked={areaCheck}
@@ -122,32 +123,24 @@ function App() {
         <div className='border-2 border-black p-3 '>
           <p>By Continent</p>
           <select name="regions" className='drop-shadow-lg border-neutral-700 border-2' onChange={e => setRegion(e.target.value)}>
-            <option> All </option>
-            {uniqueRegions.length ? (
-              uniqueRegions.map((region, index) => (
-                <option key={index} className='options' value={region}>
-                  {region}
-                </option>
-              ))
-            ) : (
-              <option>No regions available</option>
-            )}
+            <option value="All">All</option>
+            {uniqueRegions.map((region, index) => (
+              <option key={index} value={region}>
+                {region}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className='border-2 border-black p-3'>
           <p>By Subregion</p>
-          <select name="subregions" className='drop-shadow-lg border-neutral-700 border-2' onChange={e => setSubregion(e.target.value)}>
-            <option> Choose region </option>
-            {uniqueSubregions.length ? (
-              uniqueSubregions.map((subregion, index) => (
-                <option key={index} className='' value={subregion}>
-                  {subregion}
-                </option>
-              ))
-            ) : (
-              <option>No regions available</option>
-            )}
+          <select name="subregions" className='drop-shadow-lg border-neutral-700 border-2' onChange={(e) => {setSubregion(e.target.value)}}>
+            <option>Choose region</option>
+            {uniqueSubregions.map((subregion, index) => (
+              <option key={index} value={subregion}>
+                {subregion}
+              </option>
+            ))}
           </select>
         </div>
       </div>
