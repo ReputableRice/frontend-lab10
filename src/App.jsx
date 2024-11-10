@@ -63,9 +63,6 @@ function App() {
     setData(filteredCountries)
   }
 
-
-
-
   // https://stackoverflow.com/questions/35976167/find-unique-values-from-an-array-in-react-js
   const uniqueRegions = Array.from(new Set(staticData.map((country) => country.region)))
 
@@ -74,80 +71,83 @@ function App() {
   return (
     <div className='home'>
       <h1 className='m-auto font-black text-5xl'>Countries of the World</h1>
-      <div className='m-auto flex mt-6 mb-6'>
-        <div className='border-2 border-black m p-3 flex items-center space-x-3'>
-          <input
-            type='checkbox'
-            onChange={() =>
-              setAlphaCheck(!alphaCheck)}
-            checked={alphaCheck}
-          />
-          <p>Alpha</p>
-        </div>
-
-        <div className='border-2 border-black m p-3 flex flex-col space-x-3'>
-          <p>Top 10</p>
-          <div className='flex space-x-6'>
+      <div className='m-auto flex flex-col items-center mt-6'>
+        <div>Filters & Sorting</div>
+        <div className='m-auto flex mb-6'>
+          <div className='border-2 border-black m p-3 flex items-center space-x-3'>
             <input
               type='checkbox'
-              onChange={() => {
-                setPopulationCheck(!populationCheck);
-                setAreaCheck(false)
-              }}
-              checked={populationCheck}
+              onChange={() =>
+                setAlphaCheck(!alphaCheck)}
+              checked={alphaCheck}
             />
-            <p>By Population</p>
+            <p>Alpha</p>
           </div>
 
-          <div className='flex space-x-6'>
-            <input
-              type="checkbox"
-              onChange={() => {
-                setAreaCheck(!areaCheck);
-                setPopulationCheck(false)
-              }}
-              checked={areaCheck}
-            />
-            <p>By Area</p>
+          <div className='border-2 border-black m p-3 flex flex-col space-x-3'>
+            <p>Top 10</p>
+            <div className='flex space-x-6'>
+              <input
+                type='checkbox'
+                onChange={() => {
+                  setPopulationCheck(!populationCheck);
+                  setAreaCheck(false)
+                }}
+                checked={populationCheck}
+              />
+              <p>By Population</p>
+            </div>
+
+            <div className='flex space-x-6'>
+              <input
+                type="checkbox"
+                onChange={() => {
+                  setAreaCheck(!areaCheck);
+                  setPopulationCheck(false)
+                }}
+                checked={areaCheck}
+              />
+              <p>By Area</p>
+            </div>
           </div>
-        </div>
 
-        <div className='border-2 border-black p-3 '>
-          <p>By Continent</p>
-          <select
-            name="regions"
-            className='drop-shadow-lg border-neutral-700 border-2'
-            value={region}
-            onChange={e => {
-              setRegion(e.target.value)
-              setSubregion("Choose region")
-            }}>
-            <option value="All">All</option>
-            {uniqueRegions.map((region, index) => (
-              <option key={index} value={region}>
-                {region}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className='border-2 border-black p-3 '>
+            <p>By Continent</p>
+            <select
+              name="regions"
+              className='drop-shadow-lg border-neutral-700 border-2'
+              value={region}
+              onChange={e => {
+                setRegion(e.target.value)
+                setSubregion("Choose region")
+              }}>
+              <option value="All">All</option>
+              {uniqueRegions.map((region, index) => (
+                <option key={index} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className='border-2 border-black p-3'>
-          <p>By Subregion</p>
-          <select
-            name="subregions"
-            className='drop-shadow-lg border-neutral-700 border-2'
-            value={subregion}
-            onChange={(e) => {
-              setSubregion(e.target.value)
-              setRegion("All")
-            }}>
-            <option>Choose region</option>
-            {uniqueSubregions.map((subregion, index) => (
-              <option key={index} value={subregion}>
-                {subregion}
-              </option>
-            ))}
-          </select>
+          <div className='border-2 border-black p-3'>
+            <p>By Subregion</p>
+            <select
+              name="subregions"
+              className='drop-shadow-lg border-neutral-700 border-2'
+              value={subregion}
+              onChange={(e) => {
+                setSubregion(e.target.value)
+                setRegion("All")
+              }}>
+              <option>Choose region</option>
+              {uniqueSubregions.map((subregion, index) => (
+                <option key={index} value={subregion}>
+                  {subregion}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 

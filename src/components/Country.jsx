@@ -6,7 +6,7 @@ export default function Country({ data }) {
                 data.map((country, index) => (
                     <div key={index} className='countries m-1'>
                         <div className='w-96'>
-                            <div className='flex bg-gray-500 font-bold text-2xl h-12'>
+                            <div className='flex bg-gray-500 font-bold text-2xl h-16'>
                                 <img src={country.flags.png} />
                                 <div>{country.name.common}</div>
                             </div>
