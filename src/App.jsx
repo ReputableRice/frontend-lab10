@@ -27,15 +27,7 @@ function App() {
     applyFilters();
   }, [alphaCheck, populationCheck, areaCheck, region, subregion]);
 
-  useEffect(() => {
-    if (subregion && subregion !== "Choose region") {
-      return (
-        <option>
-        </option>
-      )
-    }
-    
-  }, [subregion])
+
   async function fetchData() {
     try {
       const response = await fetch(DATA_URL)
@@ -70,17 +62,17 @@ function App() {
 
     setData(filteredCountries)
   }
-  
+
+
+
 
   // https://stackoverflow.com/questions/35976167/find-unique-values-from-an-array-in-react-js
   const uniqueRegions = Array.from(new Set(staticData.map((country) => country.region)))
 
-  const uniqueSubregions = Array.from(new Set(staticData.map((country) => country.subregion)))
+  const uniqueSubregions = Array.from(new Set(staticData.map((country) => country.subregion).filter((subregion) => subregion && subregion.length > 0)))
 
   return (
     <div className='home'>
-      <span>
-      </span>
       <h1 className='m-auto font-black text-5xl'>Countries of the World</h1>
       <div className='m-auto flex mt-6 mb-6'>
         <div className='border-2 border-black m p-3 flex items-center space-x-3'>
@@ -122,7 +114,14 @@ function App() {
 
         <div className='border-2 border-black p-3 '>
           <p>By Continent</p>
-          <select name="regions" className='drop-shadow-lg border-neutral-700 border-2' onChange={e => setRegion(e.target.value)}>
+          <select
+            name="regions"
+            className='drop-shadow-lg border-neutral-700 border-2'
+            value={region}
+            onChange={e => {
+              setRegion(e.target.value)
+              setSubregion("Choose region")
+            }}>
             <option value="All">All</option>
             {uniqueRegions.map((region, index) => (
               <option key={index} value={region}>
@@ -134,7 +133,14 @@ function App() {
 
         <div className='border-2 border-black p-3'>
           <p>By Subregion</p>
-          <select name="subregions" className='drop-shadow-lg border-neutral-700 border-2' onChange={(e) => {setSubregion(e.target.value)}}>
+          <select
+            name="subregions"
+            className='drop-shadow-lg border-neutral-700 border-2'
+            value={subregion}
+            onChange={(e) => {
+              setSubregion(e.target.value)
+              setRegion("All")
+            }}>
             <option>Choose region</option>
             {uniqueSubregions.map((subregion, index) => (
               <option key={index} value={subregion}>
